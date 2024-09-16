@@ -18,6 +18,8 @@ const (
 	RETURN_VALUE_OBJ = "RETURN"
 	FUNCTION_OBJ     = "FUNCTION"
 	BUILTIN_OBJ      = "BUILTIN"
+	ARRAY_OBJ        = "ARRAY"
+	HASH_OBJ         = "HASH"
 )
 
 type Object interface {
@@ -35,6 +37,10 @@ type String struct {
 
 type Boolean struct {
 	Value bool
+}
+
+type Array struct {
+	Elements []Object
 }
 
 type ReturnValue struct {
@@ -97,3 +103,20 @@ func (s *String) Type() ObjectType { return STRING_OBJ }
 
 func (b *Builtin) Inspect() string  { return "builtin function" }
 func (b *Builtin) Type() ObjectType { return BUILTIN_OBJ }
+
+func (a *Array) Type() ObjectType { return ARRAY_OBJ }
+func (a *Array) Inspect() string {
+	var out bytes.Buffer
+
+	elements := []string{}
+
+	for _, e := range a.Elements {
+		elements = append(elements, e.Inspect())
+	}
+
+	out.WriteString("[")
+	out.WriteString(strings.Join(elements, ", "))
+	out.WriteString("]")
+
+	return out.String()
+}
